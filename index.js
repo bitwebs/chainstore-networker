@@ -1,18 +1,18 @@
 const { NanoresourcePromise: Nanoresource } = require('nanoresource-promise/emitter')
-const HypercoreProtocol = require('hypercore-protocol')
-const hyperswarm = require('hyperswarm')
+const BitProtocol = require('@web4/bit-protocol')
+const bitswarm = require('@web4/bitswarm')
 const codecs = require('codecs')
 const pump = require('pump')
 const maybe = require('call-me-maybe')
 
 const STREAM_PEER = Symbol('networker-stream-peer')
 
-class CorestoreNetworker extends Nanoresource {
-  constructor (corestore, opts = {}) {
+class ChainstoreNetworker extends Nanoresource {
+  constructor (chainstore, opts = {}) {
     super()
-    this.corestore = corestore
+    this.chainstore = chainstore
     this.opts = opts
-    this.keyPair = opts.keyPair || HypercoreProtocol.keyPair()
+    this.keyPair = opts.keyPair || BitProtocol.keyPair()
 
     this._replicationOpts = {
       encrypt: true,
@@ -38,7 +38,7 @@ class CorestoreNetworker extends Nanoresource {
 
   _replicate (protocolStream) {
     // The initiator parameter here is ignored, since we're passing in a stream.
-    this.corestore.replicate(false, {
+    this.chainstore.replicate(false, {
       ...this._replicationOpts,
       stream: protocolStream
     })
@@ -145,7 +145,7 @@ class CorestoreNetworker extends Nanoresource {
     const self = this
     if (this.swarm) return
 
-    this.swarm = this.opts.swarm || hyperswarm({
+    this.swarm = this.opts.swarm || bitswarm({
       ...this.opts,
       announceLocalNetwork: true,
       queue: { multiplex: true }
@@ -158,7 +158,7 @@ class CorestoreNetworker extends Nanoresource {
       var finishedHandshake = false
       var processed = false
 
-      const protocolStream = new HypercoreProtocol(isInitiator, { ...this._replicationOpts })
+      const protocolStream = new BitProtocol(isInitiator, { ...this._replicationOpts })
       protocolStream.on('handshake', () => {
         const deduped = info.deduplicate(protocolStream.publicKey, protocolStream.remotePublicKey)
         if (!deduped) {
@@ -279,7 +279,7 @@ class CorestoreNetworker extends Nanoresource {
   }
 }
 
-module.exports = CorestoreNetworker
+module.exports = ChainstoreNetworker
 
 class SwarmExtension {
   constructor (networker, name, opts) {

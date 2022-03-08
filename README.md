@@ -1,29 +1,25 @@
-# `@corestore/networker`
-[![Build Status](https://travis-ci.com/andrewosh/corestore-networker.svg?branch=master)](https://travis-ci.com/andrewosh/corestore-networker)
+# `@web4/chainstore-networker`
 
-A corestore networking module that uses [hyperswarm](https://github.com/hyperswarm/network) to discovery peers. This module powers the networking portion of the [Hyperspace](https://github.com/hyperspace-org/hyperspace).
 
-Calls to `configure` will not be persisted across restarts, so you'll need to use a separate database that maps discovery keys to network configurations. The Hyperdrive daemon uses [Level](https://github.com/level/level) for this.
+A chainstore networking module that uses [bitswarm](https://github.com/bitwebs/network) to discovery peers. This module powers the networking portion of the [Bitspace](https://github.com/bitwebs/bitspace).
 
-Since corestore has an all-to-all replication model (any shared cores between two peers will be automatically replicated), only one connection needs to be maintained per peer. If multiple connections are opened to a single peer as a result of that peer announcing many keys, then these connections will be automatically deduplicated by comparing NOISE keypairs.
+Calls to `configure` will not be persisted across restarts, so you'll need to use a separate database that maps discovery keys to network configurations. The Bitdrive daemon uses [Level](https://github.com/level/level) for this.
 
-### Upgrading from corestore-swarm-networking
-This module's going through a major change + a rename as part of our push to develop [Hyperspace](https://github.com/hyperspace-org/hyperspace). With these updates, `@corestore/networker` and Hyperspace's `network` APIs are now interchangeable! 
+Since chainstore has an all-to-all replication model (any shared chains between two peers will be automatically replicated), only one connection needs to be maintained per peer. If multiple connections are opened to a single peer as a result of that peer announcing many keys, then these connections will be automatically deduplicated by comparing NOISE keypairs.
 
-If you've previously been using `corestore-swarm-networking` and you'd like to upgrade, [`UPGRADE.md`](https://github.com/andrewosh/corestore-swarm-networking/blob/master/UPGRADE.md) explains the changes.
 
 ### Installation
 ```
-npm i @corestore/networker
+npm i @web4/chainstore-networker
 ```
 
 ### Usage
 ```js
-const Networker = require('@corestore/networker')
-const Corestore = require('corestore')
+const Networker = require('@web4/chainstore-networker')
+const Chainstore = require('@web4/chainstore')
 const ram = require('random-access-memory')
 
-const store = new Corestore(ram)
+const store = new Chainstore(ram)
 await store.ready()
 
 const networker = new Networker(store)
@@ -40,16 +36,16 @@ await networker.close()
 
 ### API
 
-#### `const networker = new Networker(corestore, networkingOptions = {})`
-Creates a new SwarmNetworker that will open replication streams on the `corestore` instance argument.
+#### `const networker = new Networker(chainstore, networkingOptions = {})`
+Creates a new SwarmNetworker that will open replication streams on the `chainstore` instance argument.
 
-`networkOpts` is an options map that can include all [hyperswarm](https://github.com/hyperswarm/hyperswarm) options (which will be passed to the internal swarm instance) as well as:
+`networkOpts` is an options map that can include all [bitswarm](https://github.com/bitwebs/bitswarm) options (which will be passed to the internal swarm instance) as well as:
 ```js
 {
   id: crypto.randomBytes(32), // A randomly-generated peer ID,
-  keyPair: HypercoreProtocol.keyPair(), // A NOISE keypair that's used across all connections.
+  keyPair: BitProtocol.keyPair(), // A NOISE keypair that's used across all connections.
   onauthenticate: (remotePublicKey, cb) => { cb() }, // A NOISE keypair authentication hook
-  swarm: hyperswarm(), // A hyperswarm instance to use (e.g., hyperswarm-web in the browser)
+  swarm: bitswarm(), // A bitswarm instance to use (e.g., bitswarm-web in the browser)
 }
 ```
 
@@ -60,7 +56,7 @@ The list of currently-connected peers. Each Peer object has the form:
   remotePublicKey: 0xabc..., // The remote peer's NOISE key.
   remoteAddress: '10.23.4...:8080', // The remote peer's host/port.
   type: 'tcp' | 'utp', // The connection type
-  stream // The connection's HypercoreProtocol stream
+  stream // The connection's BitProtocol stream
 }
 ```
 
@@ -91,7 +87,7 @@ Returns `true` if that discovery key is being swarmed.
 Returns true if the swarm has discovered and attempted to connect to all peers announcing `discoveryKey`.
 
 #### `networker.listen()`
-Starts listening for connections on Hyperswarm's default port.
+Starts listening for connections on Bitswarm's default port.
 
 This is called automatically before the first call to `configure`.
 
@@ -101,7 +97,7 @@ Shut down the swarm networker.
 This will close all replication streams and then destroy the swarm instance. It will wait for all topics to be unannounced, so it might take some time.
 
 ### Swarm Extensions
-`@corestore/networker` introduces stream-level extensions that operate on each connection. They adhere to Hypercore's [extension API](https://github.com/hypercore-protocol/hypercore#ext--feedregisterextensionname-handlers).
+`@chainstore/networker` introduces stream-level extensions that operate on each connection. They adhere to Unichain's [extension API](https://github.com/bitwebs/unichain#ext--feedregisterextensionname-handlers).
 
 #### `const ext = await networker.registerExtension(name, { encoding, onmessage, onerror })`
 Registers an extension with name `name`.
