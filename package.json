@@ -1,6 +1,6 @@
 {
   "name": "@web4/chainstore-networker",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A Chainstore networking module based on BitSwarm.",
   "main": "index.js",
   "dependencies": {
@@ -12,7 +12,7 @@
     "pump": "^3.0.0"
   },
   "devDependencies": {
-    "@web4/bitweb-crypto": "^1.0.0",
+    "@web4/crypto": "^1.0.0",
     "@web4/chainstore": "^1.0.0",
     "@web4/dht-legacy": "^1.0.0",
     "random-access-memory": "^3.1.1",

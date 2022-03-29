@@ -1,7 +1,7 @@
 const test = require('tape')
 const ram = require('random-access-memory')
 const dht = require('@web4/dht')
-const bitwebCrypto = require('@web4/bitweb-crypto')
+const bitwebCrypto = require('@web4/crypto')
 const BitProtocol = require('@web4/bit-protocol')
 const Chainstore = require('@web4/chainstore')
 
