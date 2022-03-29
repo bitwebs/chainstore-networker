@@ -1,6 +1,6 @@
 {
   "name": "@web4/chainstore-networker",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "A Chainstore networking module based on BitSwarm.",
   "main": "index.js",
   "dependencies": {

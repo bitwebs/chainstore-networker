@@ -5,7 +5,7 @@ const bitwebCrypto = require('@web4/crypto')
 const BitProtocol = require('@web4/bit-protocol')
 const Chainstore = require('@web4/chainstore')
 
-const CorestoreNetworker = require('..')
+const ChainstoreNetworker = require('..')
 
 const BOOTSTRAP_PORT = 3100
 var bootstrap = null
@@ -518,9 +518,9 @@ async function create (opts = {}) {
       return bootstrap.once('listening', resolve)
     })
   }
-  const store = new Corestore(ram)
+  const store = new Chainstore(ram)
   await store.ready()
-  const networker = new CorestoreNetworker(store, { ...opts, bootstrap: `localhost:${BOOTSTRAP_PORT}` })
+  const networker = new ChainstoreNetworker(store, { ...opts, bootstrap: `localhost:${BOOTSTRAP_PORT}` })
   return { store, networker }
 }
 
